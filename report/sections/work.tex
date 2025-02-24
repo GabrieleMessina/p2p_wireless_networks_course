@@ -5,9 +5,9 @@
 \section{Work}
 
 \subsection{Simulation Setup}
-The simulation is designed to work with input parameters to assess the performance of the LRA protocol. The key simulation parameters include a variable number of nodes, deployed within a square area of chosen dimensions. Nodes are positioned uniformly at random to ensure a realistic network topology.
+The simulation is designed to work with input parameters to assess the performance of the LRA protocol. The key simulation parameters include a variable \textbf{number of nodes}, deployed within a square \textbf{area} of chosen dimensions. Nodes are positioned uniformly at random to ensure a realistic network topology.
 
-To introduce mobility, a \textbf{random walk model} is employed, enabling nodes to move freely within the designated area. The speed attribute of the walk model follows a Pareto distribution to simulate a context in which a few nodes move with a vehicle while the majority move by foot. This setup reflects real-world disaster recovery scenarios where emergency responders or supply vehicles travel faster than individuals navigating on foot.
+To introduce mobility, a \textbf{random walk model} is employed, enabling nodes to move freely within the designated area. The \textbf{speed} attribute of the walk model follows a Pareto distribution to simulate a context in which a few nodes move with a vehicle while the majority move by foot. This setup reflects real-world \textbf{disaster recovery} scenarios where emergency responders or supply vehicles travel faster than individuals navigating on foot.
 At the beginning of the simulation, a \textbf{sink node} is designated, serving as the central recipient of network messages.
 
 Each node randomly transmits a fixed number of \textbf{echo messages} to the sink exploiting NS3 \textbf{UdpEchoServerHelper} and \textbf{UdpEchoServerClient} fuctionalities and emulating data communication within the network. The total simulation duration is set from a parameter provided by the user.
@@ -142,7 +142,15 @@ The routing table is maintained using a \textbf{map data structure}, which estab
 
 Upon attachment of the routing protocol to a node, the node initiates a \textbf{broadcast service packet} known as the \textbf{Hello Message}. It subsequently awaits responses from neighboring nodes, which reply with a \textbf{Hello Response Message}. This exchange enables the node to \textbf{discover its neighbors} and construct its \textbf{routing table} accordingly.
 
-When a \textbf{non-service packet} is received, the node determines whether it is the intended destination. If the node is the \textbf{destination}, the protocol terminates successfully. If the node is \textbf{not} the destination or if it is \textbf{creating and forwarding a new packet} towards the sink, it searches for the \textbf{next hop} within its routing table. If no valid next hop is found, the \textbf{Link Reversal} mechanism is triggered, and the search process is repeated. If, after multiple attempts, no next hop is identified, the node \textbf{disables itself}, as it is determined to be part of a subgraph that is \textbf{disconnected from the sink}.
+When a \textbf{non-service packet} is received, the node determines whether it is the intended destination. If the node is the \textbf{destination}, the protocol terminates successfully. If the node is \textbf{not} the destination or if it is \textbf{creating and forwarding a new packet} towards the sink, it searches for the \textbf{next hop} within its routing table. 
+
+\begin{itemize}
+    \item If a \textbf{valid} next \textbf{hop} is found, the packet is forwarded to that hop along with an \textbf{Ack Request Message}, and a \textbf{timer} is started. If no \textbf{Ack Response Message} is received before the timer \textbf{expires}, the link toward that hop is marked as \textbf{"Ingoing"}.
+\end{itemize}
+
+\begin{itemize}
+    \item If \textbf{no} valid next \textbf{hop} is found, the \textbf{Link Reversal} mechanism is triggered, and the search process is repeated. If, after multiple attempts, no next hop is identified, the node \textbf{disables itself}, as it is determined to be part of a subgraph that is \textbf{disconnected from the sink}.
+\end{itemize}
 
 When a \textbf{service packet} is received, the node processes it based on the \textbf{packet type}, as follows:
 
